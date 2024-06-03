@@ -75,7 +75,6 @@ return {
   --   end,
   -- },
 
-  { "catppuccin/nvim", name = "catppuccin", priority = 1000 },
 
   {
     -- Theme inspired by Atom

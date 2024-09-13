@@ -77,15 +77,6 @@ return {
 
 
   {
-    -- Theme inspired by Atom
-    'navarasu/onedark.nvim',
-    priority = 900,
-    config = function()
-      vim.cmd.colorscheme 'onedark'
-    end,
-  },
-
-  {
     -- Set lualine as statusline
     'nvim-lualine/lualine.nvim',
     -- See `:help lualine.txt`

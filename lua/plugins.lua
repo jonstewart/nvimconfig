@@ -90,24 +90,6 @@ return {
     },
   },
 
-  -- "gc" to comment visual regions/lines
-  { 'numToStr/Comment.nvim', opts = {} },
-
-
-  {
-    -- Highlight, edit, and navigate code
-    'nvim-treesitter/nvim-treesitter',
-    dependencies = {
-      'nvim-treesitter/nvim-treesitter-textobjects',
-    },
-    build = ':TSUpdate',
-  },
-
-  {
-    -- GitHub Copilot
-    'github/copilot.vim'
-  },
-
   {
     "nvim-neo-tree/neo-tree.nvim",
     branch = "v3.x",
@@ -117,6 +99,14 @@ return {
       "MunifTanjim/nui.nvim",
       -- "3rd/image.nvim", -- Optional image support in preview window: See `# Preview Mode` for more information
     }
+  }
+  -- "gc" to comment visual regions/lines
+  { 'numToStr/Comment.nvim', opts = {} },
+
+
+  {
+    -- GitHub Copilot
+    'github/copilot.vim'
   },
 
   {

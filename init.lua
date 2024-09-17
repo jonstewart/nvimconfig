@@ -121,6 +121,9 @@ vim.o.completeopt = 'menuone,noselect'
 -- NOTE: You should make sure your terminal supports this
 vim.o.termguicolors = true
 
+-- split to the right
+vim.o.splitright = true
+
 -- [[ Basic Keymaps ]]
 
 -- Keymaps for better default experience

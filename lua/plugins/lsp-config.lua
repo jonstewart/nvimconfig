@@ -92,22 +92,24 @@ return {
     local capabilities = vim.lsp.protocol.make_client_capabilities()
     capabilities = require('cmp_nvim_lsp').default_capabilities(capabilities)
 
+    -- mason-lspconfig v2 dropped `setup_handlers`: it now enables every installed
+    -- server through `vim.lsp.enable()`, so shared settings and per-server overrides
+    -- go through `vim.lsp.config` instead of `lspconfig[server].setup{}`.
+    vim.lsp.config('*', {
+      capabilities = capabilities,
+      on_attach = on_attach,
+    })
+
+    for server_name, settings in pairs(servers) do
+      vim.lsp.config(server_name, {
+        settings = settings,
+        filetypes = settings.filetypes,
+      })
+    end
+
     -- Ensure the servers above are installed
-    local mason_lspconfig = require 'mason-lspconfig'
-
-    mason_lspconfig.setup {
+    require('mason-lspconfig').setup {
       ensure_installed = vim.tbl_keys(servers),
-    }
-
-    mason_lspconfig.setup_handlers {
-      function(server_name)
-        require('lspconfig')[server_name].setup {
-          capabilities = capabilities,
-          on_attach = on_attach,
-          settings = servers[server_name],
-          filetypes = (servers[server_name] or {}).filetypes,
-        }
-      end
     }
 
   end

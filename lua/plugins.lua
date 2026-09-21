@@ -39,11 +39,6 @@ return {
 
 
   {
-    -- GitHub Copilot
-    'github/copilot.vim'
-  },
-
-  {
     'glepnir/nerdicons.nvim', cmd = 'NerdIcons', 
     config = function() 
       require('nerdicons').setup({}) 

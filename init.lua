@@ -64,7 +64,18 @@ vim.opt.rtp:prepend(lazypath)
 --
 --  You can also configure plugins after the setup call,
 --    as they will be available in your neovim runtime.
-require('lazy').setup("plugins")
+require('lazy').setup("plugins", {
+  performance = {
+    rtp = {
+      -- lazy's rtp reset re-adds neovim's lib dir as <prefix>/lib64/nvim
+      -- whenever <prefix>/lib64 exists. Debian keeps a /usr/lib64 just for the
+      -- dynamic loader, so /usr/lib/nvim -- where the bundled parsers
+      -- (markdown, query, ...) live -- fell off the rtp and the markdown
+      -- ftplugin's vim.treesitter.start() blew up. A missing dir is harmless.
+      paths = { vim.fn.fnamemodify(vim.v.progpath, ':p:h:h') .. '/lib/nvim' },
+    },
+  },
+})
   -- NOTE: Next Step on Your Neovim Journey: Add/Configure additional "plugins" for kickstart
   --       These are some example plugins that I've included in the kickstart repository.
   --       Uncomment any of the lines below to enable them.

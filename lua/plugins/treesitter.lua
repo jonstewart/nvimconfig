@@ -4,7 +4,8 @@
 -- highlighting / indent are switched on per buffer from a FileType autocmd.
 -- Needs neovim >= 0.12, a C compiler, and the tree-sitter CLI (>= 0.26.1)
 -- on PATH: the rewrite compiles every parser through `tree-sitter build`.
--- Incremental selection is not part of the rewrite; the <c-space> maps are gone.
+-- Incremental selection is not part of the rewrite, but neovim 0.12 has it
+-- built in (:h v_an, v_in); <c-space> / <M-space> below map onto that.
 local languages = {
   'c', 'cpp', 'go', 'lua', 'python', 'rust',
   'tsx', 'javascript', 'typescript', 'vimdoc', 'vim',
@@ -39,6 +40,11 @@ return {
           vim.bo[args.buf].indentexpr = "v:lua.require'nvim-treesitter'.indentexpr()"
         end,
       })
+
+      -- The old incremental_selection keys, onto the built-in node selection.
+      vim.keymap.set('n', '<c-space>', 'van', { remap = true, desc = 'Increment selection' })
+      vim.keymap.set('x', '<c-space>', 'an', { remap = true, desc = 'Increment selection' })
+      vim.keymap.set('x', '<M-space>', 'in', { remap = true, desc = 'Decrement selection' })
     end,
   },
 

@@ -3,7 +3,7 @@ return {
   name = "catppuccin",
   priority = 1000,
   config = function()
-    flavour = 'latte'
+    require('catppuccin').setup({ flavour = 'latte' })
     vim.cmd.colorscheme "catppuccin"
   end
 }

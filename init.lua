@@ -47,7 +47,7 @@ vim.g.maplocalleader = ' '
 --    https://github.com/folke/lazy.nvim
 --    `:help lazy.nvim.txt` for more info
 local lazypath = vim.fn.stdpath 'data' .. '/lazy/lazy.nvim'
-if not vim.loop.fs_stat(lazypath) then
+if not vim.uv.fs_stat(lazypath) then
   vim.fn.system {
     'git',
     'clone',
@@ -64,7 +64,18 @@ vim.opt.rtp:prepend(lazypath)
 --
 --  You can also configure plugins after the setup call,
 --    as they will be available in your neovim runtime.
-require('lazy').setup("plugins")
+require('lazy').setup("plugins", {
+  performance = {
+    rtp = {
+      -- lazy's rtp reset re-adds neovim's lib dir as <prefix>/lib64/nvim
+      -- whenever <prefix>/lib64 exists. Debian keeps a /usr/lib64 just for the
+      -- dynamic loader, so /usr/lib/nvim -- where the bundled parsers
+      -- (markdown, query, ...) live -- fell off the rtp and the markdown
+      -- ftplugin's vim.treesitter.start() blew up. A missing dir is harmless.
+      paths = { vim.fn.fnamemodify(vim.v.progpath, ':p:h:h') .. '/lib/nvim' },
+    },
+  },
+})
   -- NOTE: Next Step on Your Neovim Journey: Add/Configure additional "plugins" for kickstart
   --       These are some example plugins that I've included in the kickstart repository.
   --       Uncomment any of the lines below to enable them.
@@ -97,6 +108,13 @@ vim.o.mouse = 'a'
 --  Remove this option if you want your OS clipboard to remain independent.
 --  See `:help 'clipboard'`
 vim.o.clipboard = 'unnamedplus'
+
+-- Over ssh (the dev VMs) there is no clipboard tool, and neovim skips its
+-- OSC 52 fallback whenever 'clipboard' is set (:h clipboard-osc52), so opt
+-- in explicitly: yanks reach the host clipboard through the terminal.
+if vim.env.SSH_TTY then
+  vim.g.clipboard = 'osc52'
+end
 
 -- Enable break indent
 vim.o.breakindent = true
@@ -135,11 +153,11 @@ vim.keymap.set('n', 'k', "v:count == 0 ? 'gk' : 'k'", { expr = true, silent = tr
 vim.keymap.set('n', 'j', "v:count == 0 ? 'gj' : 'j'", { expr = true, silent = true })
 
 -- [[ Highlight on yank ]]
--- See `:help vim.highlight.on_yank()`
+-- See `:help vim.hl.on_yank()`
 local highlight_group = vim.api.nvim_create_augroup('YankHighlight', { clear = true })
 vim.api.nvim_create_autocmd('TextYankPost', {
   callback = function()
-    vim.highlight.on_yank()
+    vim.hl.on_yank()
   end,
   group = highlight_group,
   pattern = '*',
@@ -147,8 +165,8 @@ vim.api.nvim_create_autocmd('TextYankPost', {
 
 
 -- Diagnostic keymaps
-vim.keymap.set('n', '[d', vim.diagnostic.goto_prev, { desc = 'Go to previous diagnostic message' })
-vim.keymap.set('n', ']d', vim.diagnostic.goto_next, { desc = 'Go to next diagnostic message' })
+vim.keymap.set('n', '[d', function() vim.diagnostic.jump({ count = -1, float = true }) end, { desc = 'Go to previous diagnostic message' })
+vim.keymap.set('n', ']d', function() vim.diagnostic.jump({ count = 1, float = true }) end, { desc = 'Go to next diagnostic message' })
 vim.keymap.set('n', '<leader>e', vim.diagnostic.open_float, { desc = 'Open floating diagnostic message' })
 vim.keymap.set('n', '<leader>q', vim.diagnostic.setloclist, { desc = 'Open diagnostics list' })
 
